@@ -129,3 +129,35 @@ FROM PRODUCTS
 WHERE price > 1000; -- Por ejemplo, precio mayor a $1000
 SELECT * FROM ExpensiveProducts;
 
+
+DELIMITER //
+CREATE FUNCTION CalculateTotalSpent(client_id INT) RETURNS INT
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE total_spent INT;
+    
+    SELECT SUM(total) INTO total_spent
+    FROM ORDERS
+    WHERE client_id = client_id;
+    
+    RETURN total_spent;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE FUNCTION GetClientStock(client_id INT) RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE client_stock INT;
+    
+    SELECT SUM(p.stock) INTO client_stock
+    FROM PRODUCTS p
+    INNER JOIN ORDERS o ON p.product_id = o.product_id
+    WHERE o.client_id = client_id;
+    
+    RETURN client_stock;
+END //
+DELIMITER ;
+
