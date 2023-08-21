@@ -161,3 +161,41 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE OrdenamientoDinamicoDeProductos(
+    IN columna_orden VARCHAR(30),
+    IN tipo_orden VARCHAR(10)
+)
+BEGIN
+    SET @query = CONCAT('SELECT * FROM PRODUCTS ORDER BY ', columna_orden, ' ', tipo_orden);
+    PREPARE stmt FROM @query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+END //
+DELIMITER ;
+
+CALL OrdenamientoDinamicoDeProductos('price', 'DESC');
+
+
+DELIMITER //
+CREATE PROCEDURE InsertarUEliminar(
+    IN operacion INT, -- 1 para INSERTAR, 2 para ELIMINAR
+    IN nombre_producto VARCHAR(30),
+    IN cantidad INT,
+    IN precio INT,
+    IN imagen VARCHAR(40)
+)
+BEGIN
+    IF operacion = 1 THEN
+        INSERT INTO PRODUCTS (product_name, stock, price, image)
+        VALUES (nombre_producto, cantidad, precio, imagen);
+    ELSEIF operacion = 2 THEN
+        DELETE FROM PRODUCTS
+        WHERE product_name = nombre_producto;
+    END IF;
+END //
+DELIMITER ;
+
+
+CALL InsertarUEliminar(2, 'Producto a Eliminar', 0, 0, '');
+CALL InsertarUEliminar(1, 'Nuevo Producto', 50, 200, 'nuevo_producto.jpg');
