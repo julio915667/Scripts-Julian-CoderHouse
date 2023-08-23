@@ -199,3 +199,85 @@ DELIMITER ;
 
 CALL InsertarUEliminar(2, 'Producto a Eliminar', 0, 0, '');
 CALL InsertarUEliminar(1, 'Nuevo Producto', 50, 200, 'nuevo_producto.jpg');
+
+
+
+-- Tabla de historial para operaciones en Clients
+CREATE TABLE Clients_Log (
+    log_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    action_type VARCHAR(10), -- INSERT, UPDATE, DELETE
+    timestamp DATETIME,
+    user_id INT,
+    client_id INT
+    -- Otros campos relevantes para el historial
+);
+
+-- Tabla de historial para operaciones en PRODUCTS
+CREATE TABLE Products_Log (
+    log_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    action_type VARCHAR(10), -- INSERT, UPDATE, DELETE
+    timestamp DATETIME,
+    user_id INT,
+    product_id INT
+    -- Otros campos relevantes para el historial
+);
+
+
+-- Trigger para operaciones en Clients
+DELIMITER //
+CREATE TRIGGER Clients_BeforeInsert
+BEFORE INSERT ON Clients
+FOR EACH ROW
+BEGIN
+    INSERT INTO Clients_Log (action_type, timestamp, user_id, client_id)
+    VALUES ('INSERT', NOW(), @user_id, NEW.client_id);
+END;
+//
+
+CREATE TRIGGER Clients_AfterUpdate
+AFTER UPDATE ON Clients
+FOR EACH ROW
+BEGIN
+    INSERT INTO Clients_Log (action_type, timestamp, user_id, client_id)
+    VALUES ('UPDATE', NOW(), @user_id, NEW.client_id);
+END;
+//
+
+CREATE TRIGGER Clients_AfterDelete
+AFTER DELETE ON Clients
+FOR EACH ROW
+BEGIN
+    INSERT INTO Clients_Log (action_type, timestamp, user_id, client_id)
+    VALUES ('DELETE', NOW(), @user_id, OLD.client_id);
+END;
+//
+
+-- Trigger para operaciones en PRODUCTS
+DELIMITER //
+CREATE TRIGGER Products_BeforeInsert
+BEFORE INSERT ON PRODUCTS
+FOR EACH ROW
+BEGIN
+    INSERT INTO Products_Log (action_type, timestamp, user_id, product_id)
+    VALUES ('INSERT', NOW(), @user_id, NEW.product_id);
+END;
+//
+
+CREATE TRIGGER Products_AfterUpdate
+AFTER UPDATE ON PRODUCTS
+FOR EACH ROW
+BEGIN
+    INSERT INTO Products_Log (action_type, timestamp, user_id, product_id)
+    VALUES ('UPDATE', NOW(), @user_id, NEW.product_id);
+END;
+//
+
+CREATE TRIGGER Products_AfterDelete
+AFTER DELETE ON PRODUCTS
+FOR EACH ROW
+BEGIN
+    INSERT INTO Products_Log (action_type, timestamp, user_id, product_id)
+    VALUES ('DELETE', NOW(), @user_id, OLD.product_id);
+END;
+//
+
