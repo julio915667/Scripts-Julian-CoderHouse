@@ -281,3 +281,19 @@ BEGIN
 END;
 //
 
+-- Crear usuario con permisos de solo lectura
+CREATE USER 'usuario_lectura'@'localhost' IDENTIFIED BY 'contraseña_lectura';
+
+-- Crear usuario con permisos de lectura, inserción y modificación
+CREATE USER 'usuario_modificacion'@'localhost' IDENTIFIED BY 'contraseña_modificacion';
+
+-- Asignar permisos de solo lectura a todas las tablas en el esquema Mayorista ElectroBazar
+GRANT SELECT ON MayoristaElectroBazar.* TO 'usuario_lectura'@'localhost';
+
+
+-- Asignar permisos de lectura, inserción y modificación a todas las tablas en el esquema MayoristaElectroBazar
+GRANT SELECT, INSERT, UPDATE ON MayoristaElectroBazar.* TO 'usuario_modificacion'@'localhost';
+
+-- No permitir que el usuario elimine registros de ninguna tabla
+-- (Siempre es una buena práctica evitar otorgar permisos de eliminación a menos que sea necesario)
+
