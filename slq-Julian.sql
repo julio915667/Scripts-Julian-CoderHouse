@@ -294,6 +294,4 @@ GRANT SELECT ON MayoristaElectroBazar.* TO 'usuario_lectura'@'localhost';
 -- Asignar permisos de lectura, inserción y modificación a todas las tablas en el esquema MayoristaElectroBazar
 GRANT SELECT, INSERT, UPDATE ON MayoristaElectroBazar.* TO 'usuario_modificacion'@'localhost';
 
--- No permitir que el usuario elimine registros de ninguna tabla
--- (Siempre es una buena práctica evitar otorgar permisos de eliminación a menos que sea necesario)
 
