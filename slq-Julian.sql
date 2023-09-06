@@ -294,4 +294,64 @@ GRANT SELECT ON MayoristaElectroBazar.* TO 'usuario_lectura'@'localhost';
 -- Asignar permisos de lectura, inserción y modificación a todas las tablas en el esquema MayoristaElectroBazar
 GRANT SELECT, INSERT, UPDATE ON MayoristaElectroBazar.* TO 'usuario_modificacion'@'localhost';
 
+-- No permitir que el usuario elimine registros de ninguna tabla
+-- (Siempre es una buena práctica evitar otorgar permisos de eliminación a menos que sea necesario)
+
+
+
+-- Comenzamos una transacción
+START TRANSACTION;
+
+-- Verificamos si la tabla Clients tiene registros
+SELECT COUNT(*) FROM Clients;
+
+-- Si la tabla tiene registros, eliminamos algunos de ellos (dejando algunos registros)
+-- Si no tiene registros, realizamos una inserción de ejemplo
+-- En lugar de eliminar registros, agregamos nuevos registros en este ejemplo
+DELETE FROM Clients WHERE client_id IN (1, 2);
+
+-- Realizar una inserción de ejemplo si no hay registros
+INSERT INTO Clients (first_name, user_name, email, pass_word)
+VALUES ('New', 'new_user', 'new@example.com', 'new_password');
+
+-- Aquí comentamos la sentencia Rollback (no la ejecutamos)
+-- ROLLBACK;
+
+-- Y aquí ejecutamos la sentencia Commit para guardar los cambios
+COMMIT;
+
+
+-- Comenzamos una nueva transacción
+START TRANSACTION;
+
+-- Insertamos 8 nuevos registros en la tabla PRODUCTS
+INSERT INTO PRODUCTS (product_name, stock, price, image)
+VALUES
+    ('Product 1', 10, 100, 'product1.jpg'),
+    ('Product 2', 20, 200, 'product2.jpg'),
+    ('Product 3', 30, 300, 'product3.jpg'),
+    ('Product 4', 40, 400, 'product4.jpg');
+
+-- Agregamos un savepoint después de insertar el registro #4
+SAVEPOINT savepoint_after_4;
+
+-- Continuamos insertando registros
+INSERT INTO PRODUCTS (product_name, stock, price, image)
+VALUES
+    ('Product 5', 50, 500, 'product5.jpg'),
+    ('Product 6', 60, 600, 'product6.jpg'),
+    ('Product 7', 70, 700, 'product7.jpg'),
+    ('Product 8', 80, 800, 'product8.jpg');
+
+-- Agregamos un savepoint después de insertar el registro #8
+SAVEPOINT savepoint_after_8;
+
+-- Aquí comentamos la sentencia para eliminar el savepoint después de los primeros 4 registros (no la ejecutamos)
+-- ROLLBACK TO savepoint_after_4;
+
+-- Terminamos la transacción y guardamos todos los cambios
+COMMIT;
+
+
+
 
