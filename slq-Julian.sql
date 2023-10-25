@@ -352,6 +352,27 @@ SAVEPOINT savepoint_after_8;
 -- Terminamos la transacción y guardamos todos los cambios
 COMMIT;
 
+-- Informes
 
+SELECT c.first_name AS client_name, o.order_id, o.product_name, o.quantity, o.total, o.address
+FROM ORDERS o
+INNER JOIN Clients c ON o.client_id = c.client_id;
+
+SELECT c.client_id, c.first_name, SUM(o.total) AS total_spent
+FROM Clients c
+INNER JOIN ORDERS o ON c.client_id = o.client_id
+GROUP BY c.client_id, c.first_name
+HAVING total_spent > 500;
+
+SELECT p.product_id, p.product_name, SUM(o.total) AS total_revenue
+FROM PRODUCTS p
+INNER JOIN ORDERS o ON p.product_id = o.product_id
+GROUP BY p.product_id, p.product_name;
+
+
+SELECT c.client_id, c.first_name
+FROM Clients c
+LEFT JOIN ORDERS o ON c.client_id = o.client_id
+WHERE o.order_id IS NULL;
 
 
